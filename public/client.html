@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Posts</title>
+    <style>
+      .post {
+        margin-bottom: 20px;
+      }
+    </style>
+  </head>
+  <body onload="getBlogPosts()">
+    <div id="output"></div>
+    <script>
+      const createXhr = (method, url) => {
+        const xhr = new XMLHttpRequest();
+        xhr.onerror = () => {
+          document.getElementById('output').innerHTML = 'ERROR';
+        };
+        xhr.open(method, url, true);
+        return xhr;
+      };
+
+      const getBlogPosts = () => {
+        const xhr = createXhr('GET', 'http://127.0.0.1:9999/api/posts');
+        xhr.onload = () => {
+          const data = JSON.parse(xhr.responseText);
+          const elem = document.getElementById('output');
+          console.log(data);
+          for (const postId in data) {
+            const postText = data[postId]['post'];
+            const div = document.createElement('div');
+            div.className = 'post';
+            div.appendChild(document.createTextNode(postText));
+            elem.appendChild(div);
+          }
+        };
+        xhr.send();
+      };
+    </script>
+  </body>
+</html>
