@@ -5,5 +5,6 @@
 ### How To
 
 ```
+npm install
 docker comopse up
 ```
