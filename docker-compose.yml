@@ -1,0 +1,12 @@
+version: "3.9" # optional since v1.27.0
+services:
+  web:
+    environment:
+      APP_PATH: /usr/src/app
+    build: .
+    ports:
+      - "8080:8080"
+      - "8081:8081"
+    volumes:
+      - .:/usr/src/app
+    command: npm run dev
