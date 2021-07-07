@@ -54,8 +54,9 @@
       };
 
       const deletePost = (postId) => {
-        const url = 'http://127.0.0.1:9999/api/posts/' + postId;
+        const url = 'http://localhost:9999/api/posts/' + postId;
         const xhr = createXhr('DELETE', url);
+        xhr.withCredentials = true;
         xhr.onload = () => {
           if (xhr.status === 204) {
             const element = document.getElementById('postId' + postId);

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login</title>
+  </head>
+  <body>
+    <form onsubmit="handleLogin(); return false;">
+      Username: <input type="text" id="username" /> Password: <input type="password" id="password" />
+      <input type="submit" id="btnSubmit" value="Login" />
+    </form>
+    <script>
+      const handleLogin = () => {
+        const username = document.getElementById('username').value;
+        document.cookie = 'username=' + username;
+        window.location = 'http://localhost:9999/client.html';
+      };
+    </script>
+  </body>
+</html>
