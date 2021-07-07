@@ -22,16 +22,15 @@ app.use(cookieParser());
 app.use(express.static('public'));
 
 // CORS middleware ---------------------------
-// origin whitelist
-const originWhitelist = [
-  'http://localhost:9999',
-  'https://4421999350dd.ngrok.io',
+// origin whitelist for regex
+const originWhitelistRegex = [
+  /^http:\/\/localhost(:\d+)?$/i,
+  /^https:\/\/\S+?\.ngrok\.io\/?$/i,
 ];
-const craeteWhitellistValidator = (whitelist) => {
-  return (value) => {
-    for (const origin of whitelist) {
-      console.log(origin);
-      if (value === origin) {
+const createOirginRegexValidator = (regexList) => {
+  return (origin) => {
+    for (const regex of regexList) {
+      if (regex.test(origin)) {
         return true;
       }
     }
@@ -41,7 +40,7 @@ const craeteWhitellistValidator = (whitelist) => {
 
 // CORS Options
 const corsOptions = {
-  allowOrigin: craeteWhitellistValidator(originWhitelist),
+  allowOrigin: createOirginRegexValidator(originWhitelistRegex),
 };
 // CORS handling
 const handleCors = (options) => {
