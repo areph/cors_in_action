@@ -1,6 +1,7 @@
 "use strict";
 
 const express = require("express");
+const cookieParser = require("cookie-parser");
 
 const HOST = "0.0.0.0";
 const PORT = 9999;
@@ -15,6 +16,8 @@ const POSTS = {
 // App
 const app = express();
 
+// use cookie
+app.use(cookieParser());
 // use static files
 app.use(express.static("public"));
 
@@ -26,9 +29,11 @@ const isPreflight = (req) => {
   return isHttpOptions && hasOriginHeader && hasRequestMethod;
 };
 const handleCors = (req, res, next) => {
-  res.set("Access-Control-Allow-Origin", "https://b1b5178caf09.ngrok.io");
+  res.set("Access-Control-Allow-Origin", "http://localhost:9999");
+  res.set("Access-Control-Allow-Credentials", "true");
   if (isPreflight(req)) {
     res.set("Access-Control-Allow-Methods", "GET, DELETE");
+    res.set("Access-Control-Max-Age", "30");
     res.status(204).end();
     return;
   }
@@ -41,8 +46,12 @@ app.get("/api/posts", (req, res) => {
   res.json(POSTS);
 });
 app.delete("/api/posts/:id", (req, res) => {
-  delete POSTS[req.params.id];
-  res.status(204).end();
+  if (req.cookies["username"] === "owner") {
+    delete POSTS[req.params.id];
+    res.status(204).end();
+  } else {
+    res.status(403).end();
+  }
 });
 
 app.listen(PORT, () =>
