@@ -21,27 +21,43 @@ app.use(cookieParser());
 // use static files
 app.use(express.static('public'));
 
-// add CORS middleware
-const isPreflight = (req) => {
-  const isHttpOptions = req.method === 'OPTIONS';
-  const hasOriginHeader = req.headers['origin'];
-  const hasRequestMethod = req.headers['access-control-request-method'];
-  return isHttpOptions && hasOriginHeader && hasRequestMethod;
+// CORS middleware ---------------------------
+// origin whitelist
+const originWhitelist = [
+  'http://localhost:9999',
+  'https://4421999350dd.ngrok.io',
+];
+const craeteWhitellistValidator = (whitelist) => {
+  return (value) => {
+    for (const origin of whitelist) {
+      console.log(origin);
+      if (value === origin) {
+        return true;
+      }
+    }
+    return false;
+  };
 };
-const handleCors = (req, res, next) => {
-  res.set('Access-Control-Allow-Origin', 'http://localhost:9999');
-  res.set('Access-Control-Allow-Credentials', 'true');
-  if (isPreflight(req)) {
-    res.set('Access-Control-Allow-Methods', 'GET, DELETE');
-    res.set('Access-Control-Max-Age', '30');
-    res.status(204).end();
-    return;
-  } else {
-    res.set('Access-Control-Expose-Headers', 'X-Powered-By');
-  }
-  next();
+
+// CORS Options
+const corsOptions = {
+  allowOrigin: craeteWhitellistValidator(originWhitelist),
 };
-app.use(handleCors);
+// CORS handling
+const handleCors = (options) => {
+  return (req, res, next) => {
+    if (options.allowOrigin) {
+      const origin = req.headers['origin'];
+      if (options.allowOrigin(origin)) {
+        res.set('Access-Control-Allow-Origin', origin);
+      }
+    } else {
+      res.set('Access-Control-Allow-Origin', '*');
+    }
+    next();
+  };
+};
+app.use(handleCors(corsOptions));
 
 // API
 app.get('/api/posts', (req, res) => {
