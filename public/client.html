@@ -17,35 +17,41 @@
       const createXhr = (method, url) => {
         const xhr = new XMLHttpRequest();
         xhr.onerror = () => {
-          document.getElementById('output').innerHTML = 'ERROR';
+          document.getElementById("output").innerHTML = "ERROR";
         };
         xhr.open(method, url, true);
         return xhr;
       };
 
       const getBlogPosts = () => {
-        const xhr = createXhr('GET', 'http://127.0.0.1:9999/api/posts');
+        const xhr = createXhr("GET", "http://127.0.0.1:9999/api/posts");
         xhr.onload = () => {
           const data = JSON.parse(xhr.responseText);
-          const elem = document.getElementById('output');
-          console.log(data);
+          const elem = document.getElementById("output");
+          const xPowerdBy = xhr.getResponseHeader("X-Powered-By");
+          if (xPowerdBy) {
+            const xbpDiv = document.createElement("div");
+            xbpDiv.className = "post";
+            xbpDiv.innerHTML = "X-Powered-By: " + xPowerdBy;
+            elem.appendChild(xbpDiv);
+          }
           for (const postId in data) {
-            const postText = data[postId]['post'];
-            const div = document.createElement('div');
-            div.className = 'post';
-            div.id = 'postId' + postId;
+            const postText = data[postId]["post"];
+            const div = document.createElement("div");
+            div.className = "post";
+            div.id = "postId" + postId;
             div.appendChild(document.createTextNode(postText));
 
             // delete link
-            const a = document.createElement('a');
-            a.innerHTML = 'Delete post #' + postId;
-            a.href = '#';
+            const a = document.createElement("a");
+            a.innerHTML = "Delete post #" + postId;
+            a.href = "#";
             a.onclick = (function (postId) {
               return () => {
                 deletePost(postId);
               };
             })(postId);
-            div.appendChild(document.createTextNode(' '));
+            div.appendChild(document.createTextNode(" "));
             div.appendChild(a);
             elem.appendChild(div);
           }
@@ -54,12 +60,12 @@
       };
 
       const deletePost = (postId) => {
-        const url = 'http://localhost:9999/api/posts/' + postId;
-        const xhr = createXhr('DELETE', url);
+        const url = "http://localhost:9999/api/posts/" + postId;
+        const xhr = createXhr("DELETE", url);
         xhr.withCredentials = true;
         xhr.onload = () => {
           if (xhr.status === 204) {
-            const element = document.getElementById('postId' + postId);
+            const element = document.getElementById("postId" + postId);
             element.parentNode.removeChild(element);
           }
         };

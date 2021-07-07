@@ -8,14 +8,15 @@
   </head>
   <body>
     <form onsubmit="handleLogin(); return false;">
-      Username: <input type="text" id="username" /> Password: <input type="password" id="password" />
+      Username: <input type="text" id="username" /> Password:
+      <input type="password" id="password" />
       <input type="submit" id="btnSubmit" value="Login" />
     </form>
     <script>
       const handleLogin = () => {
-        const username = document.getElementById('username').value;
-        document.cookie = 'username=' + username;
-        window.location = 'http://localhost:9999/client.html';
+        const username = document.getElementById("username").value;
+        document.cookie = "username=" + username;
+        window.location = "http://localhost:9999/client.html";
       };
     </script>
   </body>
